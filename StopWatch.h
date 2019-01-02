@@ -6,22 +6,19 @@ class StopWatch
 {
 public:
 
-    void start() { play(); us_start_ = micros(); }
-    void stop() { pause(); us_start_ = 0; }
-    void restart() { stop(); start(); }
+    inline void start() { play(); us_start_ = micros(); }
+    inline void stop() { pause(); us_start_ = 0; }
+    inline void restart() { stop(); start(); }
 
-    void play() { is_running_ = true; us_elapsed_ = us(); }
-    void pause() { is_running_ = false; us_start_ = micros() - us_elapsed_; }
+    inline void play() { is_running_ = true; us_elapsed_ = us(); }
+    inline void pause() { is_running_ = false; us_start_ = micros() - us_elapsed_; }
 
-    bool isRunning() { return is_running_; }
+    inline bool isRunning() const { return is_running_; }
 
-    inline void setCurrTime(double sec)
-    {
-        us_offset_ += sec * 1000000. - us();
-    }
-    void setOffsetUs(double us_offset) { us_offset_ = us_offset; }
-    void setOffsetMs(double ms_offset) { setOffsetUs(1000. * ms_offset); }
-    void setOffsetSec(double sec_offset) { setOffsetUs(1000000. * sec_offset); }
+    inline void setCurrTime(double sec) { us_offset_ += sec * 1000000. - us(); }
+    inline void setOffsetUs(double us_offset) { us_offset_ = us_offset; }
+    inline void setOffsetMs(double ms_offset) { setOffsetUs(1000. * ms_offset); }
+    inline void setOffsetSec(double sec_offset) { setOffsetUs(1000000. * sec_offset); }
 
     // TODO: how to handle over int32_t range
     inline double us() const
@@ -54,7 +51,7 @@ public:
     {
     }
 
-    double frame()
+    double frame() const
     {
         return us() / interval_;
     }
