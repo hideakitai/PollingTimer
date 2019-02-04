@@ -1,7 +1,5 @@
 #include <StopWatch.h>
-// IntervalCounter interval(1.0); // interval is 1.0[sec]
-FrameRateCounter interval(1.0);
-
+IntervalCounter interval(1.0); // interval is 1.0[sec]
 
 void setup()
 {
@@ -15,11 +13,11 @@ void loop()
     {
         if (interval.isNext())
         {
-            // Serial.print("interval count = ");
-            // Serial.print(interval.count());
-            // Serial.print(", time = ");
-            // Serial.println(interval.ms());
+            Serial.print("interval count = ");
+            Serial.print(interval.count());
+            Serial.print(", time = ");
+            Serial.println(interval.ms());
         }
     }
-    // if (interval.count() > 10) interval.restart();
+    if (interval.count() > 10) interval.restart();
 }
