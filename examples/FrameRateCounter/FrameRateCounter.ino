@@ -13,7 +13,7 @@ void loop()
 {
     if (fps.isRunning())
     {
-        if (fps.isNextFrame())
+        if (fps.isNext())
         {
             Serial.print("frame no. = ");
             Serial.print(fps.frame());
