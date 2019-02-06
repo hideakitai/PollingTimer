@@ -1,6 +1,6 @@
 # StopWatch
 Arduino library to monitor time and frame rate from any time if you want.
-This library has two classes, `StopWatch` and `FrameRateCounter`.
+This library has three classes, `StopWatch` , `FrameRateCounter`, and `IntervalCounter`.
 
 ## Usage
 
@@ -43,6 +43,8 @@ void setup()
 
 void loop()
 {
+    fps.update();
+
     if (fps.isRunning())
     {
         if (fps.isNext())
@@ -71,6 +73,8 @@ void setup()
 
 void loop()
 {
+    interval.update();
+
     if (interval.isRunning())
     {
         if (interval.isNext())
@@ -98,34 +102,38 @@ void loop()
     inline void pause()
 
     inline bool isRunning()
+    inline bool isPausing()
 
     inline double us() const
     inline double ms() const
     inline double sec() const
 
-    inline void setCurrTime(double sec)
-    inline void setOffsetUs(double us_offset)
-    inline void setOffsetMs(double ms_offset)
-    inline void setOffsetSec(double sec_offset)
+    inline void offsetUs(double us)
+    inline void offsetMs(double ms)
+    inline void offsetSec(double sec)
 ```
 
 ### For FrameRateCounter & IntervalCounter
 
 ``` C++
     FrameRateCounter(double fps)
+    inline bool update()
     inline bool isNext()
     inline double frame() const
     inline void setFrameRate(double fps)
     inline void setFirstFrameToOne(bool b) // default : false (zero frame is first frame no.)
+    inline void offset(int64_t offset)
 ```
 
 ### For FrameRateCounter & IntervalCounter
 
 ``` C++
     IntervalCounter(double interval) // second
+    inline bool update()
     inline bool isNext()
     inline double count() const
     inline void setInterval(double interval)
+    inline void offset(int64_t offset)
 ```
 
 

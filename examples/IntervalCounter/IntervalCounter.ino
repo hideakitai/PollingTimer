@@ -9,6 +9,8 @@ void setup()
 
 void loop()
 {
+    interval.update();
+    
     if (interval.isRunning())
     {
         if (interval.isNext())

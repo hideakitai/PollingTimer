@@ -11,6 +11,8 @@ void setup()
 
 void loop()
 {
+    fps.update();
+    
     if (fps.isRunning())
     {
         if (fps.isNext())
