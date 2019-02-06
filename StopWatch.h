@@ -4,103 +4,150 @@
 
 class StopWatch
 {
+protected:
+
+    const int64_t UNAVAILABLE              = 0xFFFFFFFFFFFFFFFF;
+    const int64_t UINT32_NUMERIC_LIMIT_MAX = 0x00000000FFFFFFFF;
+
 public:
+
     virtual ~StopWatch() {}
 
-    inline void start() { play(); us_start_ = micros(); }
-    inline void stop() { pause(); us_start_ = 0; }
+    inline void start()
+    {
+        running = true;
+        prev_us = micros();
+        origin = now = (int64_t)prev_us;
+        overflow = offset = 0;
+    }
+    inline void stop()
+    {
+        running = false;
+        prev_us = 0;
+        origin = now = UNAVAILABLE;
+        overflow = offset = 0;
+    }
+    inline void play()
+    {
+        if (isPausing())
+        {
+            running = true;
+            uint32_t curr_us = micros();
+            if (curr_us > prev_us)
+                origin += (int64_t)(curr_us - prev_us);
+            else
+                origin += UINT32_NUMERIC_LIMIT_MAX - (int64_t)(prev_us - curr_us);
+            prev_us = curr_us;
+        }
+        else if (isRunning()) ;
+        else                  start();
+    }
+    inline void pause()
+    {
+        if      (isRunning()) { microsec(); running = false; }
+        else if (isPausing()) ;
+        else                  stop();
+    }
     inline void restart() { stop(); start(); }
 
-    inline void play() { is_running_ = true; us_elapsed_ = us(); }
-    inline void pause() { is_running_ = false; us_start_ = micros() - us_elapsed_; }
+    inline bool isRunning() const { return running; }
+    inline bool isPausing() const { return (!running && (origin != UNAVAILABLE)); }
 
-    inline bool isRunning() const { return is_running_; }
+    inline double us() { return (double)microsec(); }
+    inline double ms() { return us() * 0.001; }
+    inline double sec() { return us() * 0.000001; }
 
-    // TODO: how to handle over int32_t range
-    inline double us() const
+    inline void offsetUs(double us) { offset = (int64_t)us; }
+    inline void offsetMs(double ms) { offsetUs(1000. * ms); }
+    inline void offsetSec(double sec) { offsetUs(1000000. * sec); }
+
+protected:
+
+    inline int64_t microsec()
     {
-        if (us_start_ == 0) return 0;
-        return (double)micros() - us_start_ + us_offset_;
+        if      ( isPausing()) ;
+        else if (!isRunning()) return 0;
+        else
+        {
+            uint32_t curr_us = micros();
+            if (curr_us < prev_us) overflow += UINT32_NUMERIC_LIMIT_MAX + (int64_t)1;
+            prev_us = curr_us;
+            now = (int64_t)curr_us + overflow;
+        }
+        return (double)(now - origin + offset);
     }
-    inline double ms() const { return us() * 0.001; }
-    inline double sec() const { return us() * 0.000001; }
-
-    inline void setCurrTime(double sec) { us_offset_ += sec * 1000000. - us(); }
-    inline void setOffsetUs(double us_offset) { us_offset_ = us_offset; }
-    inline void setOffsetMs(double ms_offset) { setOffsetUs(1000. * ms_offset); }
-    inline void setOffsetSec(double sec_offset) { setOffsetUs(1000000. * sec_offset); }
 
 private:
 
-    double us_start_ {0.0};
-    double us_elapsed_ {0.0};
-    double us_offset_ {0.0};
-    bool is_running_ {false};
+    bool running {false};
+    uint32_t prev_us {0};
+    int64_t origin {UNAVAILABLE};
+    int64_t now {UNAVAILABLE};
+    int64_t overflow {0};
+    int64_t offset {0};
 };
 
-
-class FrameRateCounter : public StopWatch
+class IntervalCounter : public StopWatch
 {
 public:
 
-    FrameRateCounter(double fps)
-    : fps_(fps)
-    , interval_(getTargetIntervalMicros())
-    , prev_frame_(0)
-    , b_one_start_(true)
+    IntervalCounter (double sec)
+    : available(false)
+    , interval((uint32_t)(sec * 1000000.))
+    , next(interval)
+    , cnt(0)
     {}
 
-    virtual ~FrameRateCounter() {}
+    virtual ~IntervalCounter() {}
 
-    inline void start() { prev_frame_ = currIntFrame(); this->StopWatch::start(); }
-    inline void stop() { prev_frame_ = 0.0; this->StopWatch::stop(); }
-    inline void restart() { stop(); start(); }
+    inline void start() { StopWatch::start(); next = interval; cnt = 0; }
+    inline void stop() { StopWatch::stop(); next = UNAVAILABLE; cnt = 0; }
+    inline void restart() { IntervalCounter::stop(); IntervalCounter::start(); }
 
-    inline bool isNext()
+    inline bool update()
     {
-        double curr_frame = currIntFrame();
-        bool b = (curr_frame != prevIntFrame());
-        prev_frame_ = curr_frame;
-        return b;
+        if (microsec() > next)
+        {
+            available = true;
+            next = interval * (cnt++ + 1);
+        }
+        else
+            available = false;
+
+        return available;
     }
 
-    inline double frame() const { return us() / interval_; }
-
-    inline void setFrameRate(double fps)
-    {
-        fps_ = fps;
-        interval_ = getTargetIntervalMicros();
-    }
-
-    inline void setFirstFrameToOne(bool b) { b_one_start_ = b; }
+    inline bool isNext() { return available; }
+    inline double count() { return cnt; }
+    inline void setInterval(double i) { interval = (int64_t)(i * 1000000.); }
+    inline void offset(int64_t offset) { offsetUs(interval * offset); cnt += offset; }
 
 private:
 
-    inline double currIntFrame() const { return floor(b_one_start_ ? frame() + 1.0 : frame()); }
-    inline double prevIntFrame() const { return floor(prev_frame_); }
-
-    inline double getTargetIntervalMicros() const { return (1000000.0 / fps_); }
-
-    double fps_ {40.0};
-    double interval_ {0.0};
-    double prev_frame_ {0};
-    bool b_one_start_ {false};
+    bool available {false};
+    int64_t interval {0};
+    int64_t next {0};
+    int64_t cnt {0};
 };
 
-
-class IntervalCounter : public FrameRateCounter
+class FrameRateCounter : public IntervalCounter
 {
 public:
 
-    IntervalCounter(double interval) // second
-    : FrameRateCounter(1.0 / interval)
+    FrameRateCounter(double fps) // second
+    : IntervalCounter(1.0 / fps)
     { }
-    ~IntervalCounter() {}
+    virtual ~FrameRateCounter() {}
 
-    inline double count() const { return frame(); }
+    inline double frame() { return is_one_start ? (count() + 1.0) : count(); }
+    inline void setFrameRate(double fps) { setInterval(1. / fps); }
+    inline void setFirstFrameToOne(bool b) { is_one_start = b; }
 
-    inline void setInterval(double interval) { setFrameRate(1.0 / interval); }
+private:
+
+    bool is_one_start {false};
 };
+
 
 
 #endif // STOPWATCH_H
