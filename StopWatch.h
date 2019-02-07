@@ -91,7 +91,7 @@ class IntervalCounter : public StopWatch
 {
 public:
 
-    IntervalCounter (double sec)
+    explicit IntervalCounter (double sec)
     : available(false)
     , interval((uint32_t)(sec * 1000000.))
     , next(interval)
@@ -117,8 +117,8 @@ public:
         return available;
     }
 
-    inline bool isNext() { return available; }
-    inline double count() { return cnt; }
+    inline bool isNext() const { return available; }
+    inline double count() const { return cnt; }
     inline void setInterval(double i) { interval = (int64_t)(i * 1000000.); }
     inline void offset(int64_t offset) { offsetUs(interval * offset); cnt += offset; }
 
@@ -134,12 +134,12 @@ class FrameRateCounter : public IntervalCounter
 {
 public:
 
-    FrameRateCounter(double fps) // second
+    explicit FrameRateCounter(double fps) // second
     : IntervalCounter(1.0 / fps)
     { }
     virtual ~FrameRateCounter() {}
 
-    inline double frame() { return is_one_start ? (count() + 1.0) : count(); }
+    inline double frame() const { return is_one_start ? (count() + 1.0) : count(); }
     inline void setFrameRate(double fps) { setInterval(1. / fps); }
     inline void setFirstFrameToOne(bool b) { is_one_start = b; }
 
