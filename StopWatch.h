@@ -109,7 +109,8 @@ public:
         if (microsec() > next)
         {
             available = true;
-            next = interval * (cnt++ + 1);
+            next += interval;
+            ++cnt;
         }
         else
             available = false;
