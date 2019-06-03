@@ -1,10 +1,11 @@
 #include <StopWatch.h>
 
-FrameRateCounter fps(30);
+FrameRateCounter fps(1);
 
 void setup()
 {
     Serial.begin(115200);
+    delay(5000);
 
     fps.start();
 }
@@ -12,7 +13,7 @@ void setup()
 void loop()
 {
     fps.update();
-    
+
     if (fps.isRunning())
     {
         if (fps.isNext())
@@ -24,5 +25,5 @@ void loop()
         }
     }
 
-    if (fps.frame() > 150) fps.restart();
+    if (fps.frame() >= 10) fps.restart();
 }

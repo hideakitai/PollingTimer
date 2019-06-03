@@ -4,13 +4,15 @@ IntervalCounter interval(1.0); // interval is 1.0[sec]
 void setup()
 {
     Serial.begin(115200);
+    delay(5000);
+
     interval.start();
 }
 
 void loop()
 {
     interval.update();
-    
+
     if (interval.isRunning())
     {
         if (interval.isNext())
@@ -21,5 +23,5 @@ void loop()
             Serial.println(interval.ms());
         }
     }
-    if (interval.count() > 10) interval.restart();
+    if (interval.count() >= 10) interval.restart();
 }

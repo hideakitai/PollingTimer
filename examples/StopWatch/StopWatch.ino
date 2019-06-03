@@ -5,6 +5,7 @@ StopWatch stopwatch;
 void setup()
 {
     Serial.begin(115200);
+    delay(5000);
 
     stopwatch.start();
 }
@@ -18,6 +19,8 @@ void loop()
         Serial.print(", stopwatch : ");
         Serial.println(stopwatch.ms());
     }
+
+    delay(500);
 
     if (stopwatch.ms() > 5000) stopwatch.restart();
 }
