@@ -1,4 +1,4 @@
-#include <StopWatch.h>
+#include <IntervalCounter.h>
 IntervalCounter interval(1.0); // interval is 1.0[sec]
 
 void setup()

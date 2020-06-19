@@ -1,4 +1,4 @@
-#include <StopWatch.h>
+#include <FrameRateCounter.h>
 
 FrameRateCounter fps(1);
 

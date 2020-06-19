@@ -1,6 +1,6 @@
-#include <StopWatch.h>
+#include <PollingTimer.h>
 
-StopWatch stopwatch;
+PollingTimer stopwatch;
 
 void setup()
 {
