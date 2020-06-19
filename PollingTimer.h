@@ -1,6 +1,6 @@
 #pragma once
-#ifndef STOPWATCH_H
-#define STOPWATCH_H
+#ifndef HT_POLLINGTIMER_H
+#define HT_POLLINGTIMER_H
 
 #ifdef ARDUINO
     #include <Arduino.h>
@@ -14,7 +14,7 @@
 
 #include <functional>
 
-class StopWatch
+class PollingTimer
 {
 protected:
 
@@ -33,7 +33,7 @@ protected:
 
 public:
 
-    virtual ~StopWatch() {}
+    virtual ~PollingTimer() {}
 
     inline void start()
     {
@@ -248,145 +248,4 @@ protected:
     }
 };
 
-class IntervalCounter : public StopWatch
-{
-    double interval {0.};
-    double cnt {0.};
-
-protected:
-
-    std::function<void(void)> func;
-
-public:
-
-    explicit IntervalCounter (const double sec)
-    : interval(sec * 1000000.)
-    , cnt(0.)
-    {}
-
-    virtual ~IntervalCounter() {}
-
-    inline void startForCount(const double duration_count = 0.)
-    {
-        StopWatch::startForUsec((int64_t)(duration_count * interval));
-        cnt = 0;
-    }
-
-    inline void stop()
-    {
-        StopWatch::stop();
-        cnt = 0;
-    }
-
-    inline void restart()
-    {
-        IntervalCounter::stop();
-        IntervalCounter::start();
-    }
-
-    inline bool isNext()
-    {
-        return update();
-    }
-
-    inline double count() { if (isPausing()) update(); return (double)cnt; }
-
-    inline void setInterval(const double interval_sec)
-    {
-        interval = interval_sec * 1000000.;
-    }
-
-    inline void setOffsetCount(const double offset)
-    {
-        setOffsetUsec(interval * offset);
-    }
-
-    inline void addFunction(const std::function<void(void)>& f)
-    {
-        func = f;
-    }
-
-    inline bool hasFunction() const
-    {
-        return (bool)func;
-    }
-
-    inline bool update()
-    {
-        double prev_cnt = cnt;
-        cnt = (double)usec() / interval;
-        bool b = (cnt > 0) && (floor(cnt) > floor(prev_cnt));
-        if (b && func) func();
-        return b;
-    }
-
-};
-
-class OneshotTimer : public IntervalCounter
-{
-public:
-
-    OneshotTimer(const double sec, const std::function<void(void)>& f)
-    : IntervalCounter(sec)
-    {
-        IntervalCounter::addFunction(f);
-    }
-
-    void start()
-    {
-        IntervalCounter::startForCount(1);
-    }
-
-    inline bool update()
-    {
-        if (usec64() == 0)
-        {
-            if (hasFinished())
-            {
-                if  (hasFunction())
-                {
-                    IntervalCounter::func();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-};
-
-class FrameRateCounter : public IntervalCounter
-{
-    double fps {40.};
-    bool is_one_start {false};
-
-public:
-
-    explicit FrameRateCounter(const double fps)
-    : IntervalCounter(1.0 / fps)
-    , fps(fps)
-    , is_one_start(false)
-    {}
-
-    virtual ~FrameRateCounter() {}
-
-    inline double frame()
-    {
-        return is_one_start ? (count() + 1.) : count();
-    }
-
-    inline void setFrameRate(const double rate)
-    {
-        fps = rate;
-        setInterval(1. / fps);
-    }
-
-    inline void setFirstFrameToOne(const bool b) { is_one_start = b; }
-
-    double getFrameRate() const { return fps; }
-    bool isFristFrameOne() const { return is_one_start; }
-
-};
-
-
-
-#endif // STOPWATCH_H
+#endif // HT_POLLINGTIMER_H
