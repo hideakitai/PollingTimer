@@ -12,6 +12,8 @@
     #error THIS PLATFORM IS NOT SUPPORTED
 #endif
 
+#include <functional>
+
 class StopWatch
 {
 protected:
