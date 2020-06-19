@@ -3,13 +3,13 @@
 #define STOPWATCH_H
 
 #ifdef ARDUINO
-#include <Arduino.h>
-#define MICROS() micros()
+    #include <Arduino.h>
+    #define MICROS() micros()
 #elif defined(OF_VERSION_MAJOR)
-#include "ofMain.h"
-#define MICROS() ofGetElapsedTimeMicros()
+    #include "ofMain.h"
+    #define MICROS() ofGetElapsedTimeMicros()
 #else
-#error THIS PLATFORM IS NOT SUPPORTED
+    #error THIS PLATFORM IS NOT SUPPORTED
 #endif
 
 class StopWatch
@@ -37,43 +37,43 @@ public:
     {
         startFromForUsec64(0, 0);
     }
-    inline void startFrom(double from_sec)
+    inline void startFrom(const double from_sec)
     {
         startFromForUsec64(from_sec * 1000000., 0);
     }
-    inline void startFromMsec(double from_ms)
+    inline void startFromMsec(const double from_ms)
     {
         startFromForUsec64(from_ms * 1000., 0);
     }
-    inline void startFromUsec(double from_us)
+    inline void startFromUsec(const double from_us)
     {
         startFromForUsec64(from_us, 0);
     }
-    inline void startFor(double for_sec)
+    inline void startFor(const double for_sec)
     {
         startFromForUsec64(0, for_sec * 1000000.);
     }
-    inline void startForMsec(double for_ms)
+    inline void startForMsec(const double for_ms)
     {
         startFromForUsec64(0, for_ms * 1000.);
     }
-    inline void startForUsec(double for_us)
+    inline void startForUsec(const double for_us)
     {
         startFromForUsec64(0, for_us);
     }
-    inline void startFromFor(double from_sec, double for_sec)
+    inline void startFromFor(const double from_sec, const double for_sec)
     {
         startFromForUsec64(from_sec * 1000000., for_sec * 1000000.);
     }
-    inline void startFromForMsec(double from_ms, double for_ms)
+    inline void startFromForMsec(const double from_ms, const double for_ms)
     {
         startFromForUsec64(from_ms * 1000., for_ms * 1000.);
     }
-    inline void startFromForUsec(double from_us, double for_us)
+    inline void startFromForUsec(const double from_us, const double for_us)
     {
         startFromForUsec64(from_us, for_us);
     }
-    inline void startFromForUsec64(int64_t from_us, int64_t for_us)
+    inline void startFromForUsec64(const int64_t from_us, const int64_t for_us)
     {
         running = true;
         prev_running = false;
@@ -100,7 +100,7 @@ public:
         if (isPausing())
         {
             running = true;
-            uint32_t curr_us32 = MICROS();
+            const uint32_t curr_us32 = MICROS();
             int64_t diff = 0;
             if (curr_us32 > prev_us32)
                 diff = (int64_t)(curr_us32 - prev_us32);
@@ -151,15 +151,15 @@ public:
     inline double getRemainingTime() { return (double)duration - usec(); }
     inline double getRemainingLife() { return (double)duration - usec() / (double)duration; }
 
-    inline void setOffsetUsec(int64_t us) { offset = us; }
-    inline void setOffsetMsec(double ms) { setOffsetUsec(int64_t(1000. * ms)); }
-    inline void setOffsetSec(double sec) { setOffsetUsec(int64_t(1000000. * sec)); }
+    inline void setOffsetUsec(const int64_t us) { offset = us; }
+    inline void setOffsetMsec(const double ms) { setOffsetUsec(int64_t(1000. * ms)); }
+    inline void setOffsetSec(const double sec) { setOffsetUsec(int64_t(1000000. * sec)); }
 
-    inline void addOffsetUsec(int64_t us) { setOffsetUsec(offset + us); }
-    inline void addOffsetMsec(double ms) { addOffsetUsec(int64_t(1000. * ms)); }
-    inline void addOffsetSec(double sec) { addOffsetUsec(int64_t(1000000. * sec)); }
+    inline void addOffsetUsec(const int64_t us) { setOffsetUsec(offset + us); }
+    inline void addOffsetMsec(const double ms) { addOffsetUsec(int64_t(1000. * ms)); }
+    inline void addOffsetSec(const double sec) { addOffsetUsec(int64_t(1000000. * sec)); }
 
-    inline void setTimeUsec(int64_t u)
+    inline void setTimeUsec(const int64_t u)
     {
         if (isStopping())
         {
@@ -170,14 +170,6 @@ public:
         }
         else if (isPausing())
         {
-#if 0
-            uint32_t diff_us32 = MICROS() - prev_us32;
-            prev_us32 += diff_us32;
-            prev_us64 += (int64_t)diff_us32;
-            origin += (int64_t)diff_us32;
-#else
-            // Serial.print("prev = ");
-            // Serial.println(usec());
             int64_t diff_us = (int64_t)MICROS() - (int64_t)prev_us32;
             if (diff_us >= 0)
             {
@@ -201,18 +193,15 @@ public:
             }
             prev_us64 += diff_us;
             origin += diff_us;
-#endif
             setOffsetUsec(u - elapsed());
-            // Serial.print("curr = ");
-            // Serial.println(usec());
         }
         else
         {
             setOffsetUsec(u - elapsed());
         }
     }
-    inline void setTimeMsec(double m) { setTimeUsec(int64_t(m * 1000.)); }
-    inline void setTimeSec(double s) { setTimeUsec(int64_t(s * 1000000.)); }
+    inline void setTimeMsec(const double m) { setTimeUsec(int64_t(m * 1000.)); }
+    inline void setTimeSec(const double s) { setTimeUsec(int64_t(s * 1000000.)); }
 
 
 protected:
@@ -225,8 +214,6 @@ protected:
         int64_t t = elapsed() + offset;
         if ((t >= duration) && (duration != 0))
         {
-            // Serial.print("duration finished : ");
-            // Serial.println((double)duration);
             stop();
             prev_running = true;
             return 0;
@@ -245,13 +232,7 @@ protected:
             if (MICROS() < prev_us32) // overflow
             {
                 if (prev_us32 - MICROS() > UINT32_NUMERIC_LIMIT_HALF)
-                {
                     ++ovf;
-                }
-                else
-                {
-                    // Serial.print("something is wrong, won't come here ");
-                }
             }
             else // interrupted and changed prev_us after curr_us is captured
             {
@@ -259,7 +240,7 @@ protected:
             }
         }
         prev_us32 = curr_us32;
-        int64_t now = (int64_t)curr_us32 | ((int64_t)ovf << 32);
+        const int64_t now = (int64_t)curr_us32 | ((int64_t)ovf << 32);
         prev_us64 = now;
         return now - origin;
     }
@@ -276,14 +257,14 @@ protected:
 
 public:
 
-    explicit IntervalCounter (double sec)
+    explicit IntervalCounter (const double sec)
     : interval(sec * 1000000.)
     , cnt(0.)
     {}
 
     virtual ~IntervalCounter() {}
 
-    inline void startForCount(double duration_count = 0.)
+    inline void startForCount(const double duration_count = 0.)
     {
         StopWatch::startForUsec((int64_t)(duration_count * interval));
         cnt = 0;
@@ -308,12 +289,12 @@ public:
 
     inline double count() { if (isPausing()) update(); return (double)cnt; }
 
-    inline void setInterval(double interval_sec)
+    inline void setInterval(const double interval_sec)
     {
         interval = interval_sec * 1000000.;
     }
 
-    inline void setOffsetCount(double offset)
+    inline void setOffsetCount(const double offset)
     {
         setOffsetUsec(interval * offset);
     }
@@ -358,13 +339,10 @@ public:
     {
         if (usec64() == 0)
         {
-            // Serial.println("usec64 = 0");
             if (hasFinished())
             {
-                // Serial.println("finished");
                 if  (hasFunction())
                 {
-                    // Serial.println("execute event!!!!!!!!!!!");
                     IntervalCounter::func();
                     return true;
                 }
@@ -381,7 +359,7 @@ class FrameRateCounter : public IntervalCounter
 
 public:
 
-    explicit FrameRateCounter(double fps)
+    explicit FrameRateCounter(const double fps)
     : IntervalCounter(1.0 / fps)
     , fps(fps)
     , is_one_start(false)
@@ -394,13 +372,13 @@ public:
         return is_one_start ? (count() + 1.) : count();
     }
 
-    inline void setFrameRate(double rate)
+    inline void setFrameRate(const double rate)
     {
         fps = rate;
         setInterval(1. / fps);
     }
 
-    inline void setFirstFrameToOne(bool b) { is_one_start = b; }
+    inline void setFirstFrameToOne(const bool b) { is_one_start = b; }
 
     double getFrameRate() const { return fps; }
     bool isFristFrameOne() const { return is_one_start; }
