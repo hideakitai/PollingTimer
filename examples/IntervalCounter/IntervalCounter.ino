@@ -20,7 +20,7 @@ void loop()
             Serial.print("interval count = ");
             Serial.print(interval.count());
             Serial.print(", time = ");
-            Serial.println(interval.ms());
+            Serial.println(interval.msec());
         }
     }
     if (interval.count() >= 10) interval.restart();

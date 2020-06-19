@@ -17,12 +17,12 @@ void loop()
         Serial.print("millis() : ");
         Serial.print(millis());
         Serial.print(", stopwatch : ");
-        Serial.println(stopwatch.ms());
+        Serial.println(stopwatch.msec());
     }
 
     delay(500);
 
-    if (stopwatch.ms() > 5000)
+    if (stopwatch.msec() > 5000)
     {
         stopwatch.setTimeSec(0); // set current time to 0sec
         Serial.println("time is set to 0sec");;

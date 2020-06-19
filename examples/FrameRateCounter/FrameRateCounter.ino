@@ -21,7 +21,7 @@ void loop()
             Serial.print("frame no. = ");
             Serial.print(fps.frame());
             Serial.print(", time = ");
-            Serial.println(fps.ms());
+            Serial.println(fps.msec());
         }
     }
 
