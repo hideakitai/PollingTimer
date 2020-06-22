@@ -107,7 +107,6 @@ public:
             if (curr_us32 > prev_us32)
                 diff = (int64_t)(curr_us32 - prev_us32);
             else
-                // TODO: check
                 diff = UINT32_NUMERIC_LIMIT_MAX - (int64_t)(prev_us32 - curr_us32);
             origin += diff;
             prev_us64 += diff;
@@ -116,7 +115,7 @@ public:
         else if (isRunning())
             ;
         else
-            start();
+            restart();
     }
 
     inline void pause()
@@ -197,7 +196,7 @@ public:
             origin += diff_us;
             setOffsetUsec(u - elapsed());
         }
-        else
+        else // isRunning()
         {
             setOffsetUsec(u - elapsed());
         }
@@ -210,15 +209,18 @@ protected:
 
     inline int64_t microsec()
     {
-        if      (isPausing())  return prev_us64 - origin + offset;
-        else if (isStopping()) return 0;
+        if (isStopping()) return 0;
+        if (isPausing())
+        {
+            if (hasFinished()) prev_running = false;
+            return prev_us64 - origin + offset;
+        }
 
         int64_t t = elapsed() + offset;
         if ((t >= duration) && (duration != 0))
         {
-            stop();
-            prev_running = true;
-            return 0;
+            running = false;
+            return prev_us64 - origin + offset;
         }
         prev_running = isRunning();
 
