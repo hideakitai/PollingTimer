@@ -121,7 +121,7 @@ void loop()
 ### PollingTimer (also available on all timer)
 
 ``` C++
-void start()
+void start();
 void startFrom(const double from_sec);
 void startFromMsec(const double from_ms);
 void startFromUsec(const double from_us);
