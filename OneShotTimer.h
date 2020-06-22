@@ -4,14 +4,20 @@
 
 #include "IntervalCounter.h"
 
-class OneshotTimer : public IntervalCounter
+class OneShotTimer : public IntervalCounter
 {
 public:
 
-    OneshotTimer(const double sec, const std::function<void(void)>& f)
+    virtual ~OneShotTimer() {}
+
+    explicit OneShotTimer(const double sec)
+    : IntervalCounter(sec)
+    {}
+
+    OneShotTimer(const double sec, const std::function<void(void)>& f)
     : IntervalCounter(sec)
     {
-        IntervalCounter::addFunction(f);
+        IntervalCounter::addEvent(f);
     }
 
     void start()
@@ -19,21 +25,6 @@ public:
         IntervalCounter::startForCount(1);
     }
 
-    inline bool update()
-    {
-        if (usec64() == 0)
-        {
-            if (hasFinished())
-            {
-                if  (hasFunction())
-                {
-                    IntervalCounter::func();
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 };
 
 #endif // HT_ONESHOTTIMER_H
