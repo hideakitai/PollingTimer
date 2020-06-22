@@ -4,15 +4,16 @@
 
 #ifdef ARDUINO
     #include <Arduino.h>
+    #include "util/ArxTypeTraits/ArxTypeTraits.h"
+    #include "util/TeensyDirtySTLErrorSolution/TeensyDirtySTLErrorSolution.h"
     #define MICROS() micros()
 #elif defined(OF_VERSION_MAJOR)
     #include "ofMain.h"
+    #include <functional>
     #define MICROS() ofGetElapsedTimeMicros()
 #else
     #error THIS PLATFORM IS NOT SUPPORTED
 #endif
-
-#include <functional>
 
 class PollingTimer
 {
