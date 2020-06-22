@@ -37,15 +37,14 @@ public:
     inline void restart()
     {
         IntervalCounter::stop();
-        IntervalCounter::start();
+        start();
     }
 
-    inline bool isNext()
+    inline double count()
     {
-        return update();
+        if (isPausing()) update();
+        return (double)cnt;
     }
-
-    inline double count() { if (isPausing()) update(); return (double)cnt; }
 
     inline void setInterval(const double interval_sec)
     {
@@ -57,21 +56,22 @@ public:
         setOffsetUsec(interval * offset);
     }
 
-    inline void addFunction(const std::function<void(void)>& f)
+    inline void addEvent(const std::function<void(void)>& f)
     {
         func = f;
     }
 
-    inline bool hasFunction() const
+    inline bool hasEvent() const
     {
         return (bool)func;
     }
 
     inline bool update()
     {
+        if (isStopping()) return false;
         double prev_cnt = cnt;
         cnt = (double)usec() / interval;
-        bool b = (cnt > 0) && (floor(cnt) > floor(prev_cnt));
+        bool b = (floor(cnt) > 0.) && (floor(cnt) > floor(prev_cnt));
         if (b && func) func();
         return b;
     }
