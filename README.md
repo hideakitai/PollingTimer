@@ -16,7 +16,7 @@ Arduino library to manage timing and event in a flexible way with polling
 
 ## Usage
 
-### StopWatch
+### `PollingTimer`
 
 ``` C++
 #include <PollingTimer.h>
@@ -32,12 +32,12 @@ void loop()
 {
     if (timer.isRunning())
     {
-        Serial.println(stopwatch.msec());
+        Serial.println(timer.msec());
     }
 }
 ```
 
-### IntervalCounter
+### `IntervalCounter`
 
 ``` C++
 #include <IntervalCounter.h>
@@ -62,7 +62,7 @@ void loop()
 }
 ```
 
-### FrameRateCounter
+### `FrameRateCounter`
 
 ``` C++
 #include <FrameRateCounter.h>
@@ -87,7 +87,7 @@ void loop()
 }
 ```
 
-### OneShotTimer
+### `OneShotTimer`
 
 ``` C++
 #include <OneShotTimer.h>
@@ -118,7 +118,7 @@ void loop()
 
 ## APIs
 
-### PollingTimer (also available on all timer)
+### `PollingTimer` (also available on all timer)
 
 ``` C++
 void start();
