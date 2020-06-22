@@ -11,17 +11,13 @@ void setup()
 
 void loop()
 {
-    interval.update();
-
-    if (interval.isRunning())
+    if (interval.update())
     {
-        if (interval.isNext())
-        {
-            Serial.print("interval count = ");
-            Serial.print(interval.count());
-            Serial.print(", time = ");
-            Serial.println(interval.msec());
-        }
+        Serial.print("interval count = ");
+        Serial.print(interval.count());
+        Serial.print(", time = ");
+        Serial.println(interval.msec());
+
+        if (interval.count() >= 10) interval.restart();
     }
-    if (interval.count() >= 10) interval.restart();
 }

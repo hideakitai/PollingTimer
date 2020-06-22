@@ -1,30 +1,30 @@
 #include <PollingTimer.h>
 
-PollingTimer stopwatch;
+PollingTimer timer;
 
 void setup()
 {
     Serial.begin(115200);
     delay(5000);
 
-    stopwatch.start();
+    timer.start();
 }
 
 void loop()
 {
-    if (stopwatch.isRunning())
+    if (timer.isRunning())
     {
         Serial.print("millis() : ");
         Serial.print(millis());
-        Serial.print(", stopwatch : ");
-        Serial.println(stopwatch.msec());
+        Serial.print(", timer : ");
+        Serial.println(timer.msec());
     }
 
     delay(500);
 
-    if (stopwatch.msec() > 5000)
+    if (timer.msec() > 5000)
     {
-        stopwatch.setTimeSec(0); // set current time to 0sec
+        timer.setTimeSec(0); // set current time to 0sec
         Serial.println("time is set to 0sec");;
     }
 }

@@ -12,18 +12,13 @@ void setup()
 
 void loop()
 {
-    fps.update();
-
-    if (fps.isRunning())
+    if (fps.update())
     {
-        if (fps.isNext())
-        {
-            Serial.print("frame no. = ");
-            Serial.print(fps.frame());
-            Serial.print(", time = ");
-            Serial.println(fps.msec());
-        }
-    }
+        Serial.print("frame no. = ");
+        Serial.print(fps.frame());
+        Serial.print(", time = ");
+        Serial.println(fps.msec());
 
-    if (fps.frame() >= 10) fps.restart();
+        if (fps.frame() >= 10) fps.restart();
+    }
 }
