@@ -154,15 +154,17 @@ public:
     inline double getRemainingTime() { return (double)duration - usec(); }
     inline double getRemainingLife() { return (double)duration - usec() / (double)duration; }
 
-    inline void setOffsetUsec(const int64_t us) { offset = us; }
-    inline void setOffsetMsec(const double ms) { setOffsetUsec(int64_t(1000. * ms)); }
-    inline void setOffsetSec(const double sec) { setOffsetUsec(int64_t(1000000. * sec)); }
+    inline void setOffsetUsec64(const int64_t us) { offset = us; }
+    inline void setOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
+    inline void setOffsetMsec(const double ms) { setOffsetUsec64(int64_t(1000. * ms)); }
+    inline void setOffsetSec(const double sec) { setOffsetUsec64(int64_t(1000000. * sec)); }
 
-    inline void addOffsetUsec(const int64_t us) { setOffsetUsec(offset + us); }
-    inline void addOffsetMsec(const double ms) { addOffsetUsec(int64_t(1000. * ms)); }
-    inline void addOffsetSec(const double sec) { addOffsetUsec(int64_t(1000000. * sec)); }
+    inline void addOffsetUsec64(const int64_t us) { setOffsetUsec64(offset + us); }
+    inline void addOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
+    inline void addOffsetMsec(const double ms) { addOffsetUsec64(int64_t(1000. * ms)); }
+    inline void addOffsetSec(const double sec) { addOffsetUsec64(int64_t(1000000. * sec)); }
 
-    inline void setTimeUsec(const int64_t u)
+    inline void setTimeUsec64(const int64_t u)
     {
         if (isStopping())
         {
@@ -203,8 +205,9 @@ public:
             setOffsetUsec(u - elapsed());
         }
     }
-    inline void setTimeMsec(const double m) { setTimeUsec(int64_t(m * 1000.)); }
-    inline void setTimeSec(const double s) { setTimeUsec(int64_t(s * 1000000.)); }
+    inline void setTimeUsec(const double u) { setTimeUsec64(int64_t(u)); }
+    inline void setTimeMsec(const double m) { setTimeUsec64(int64_t(m * 1000.)); }
+    inline void setTimeSec(const double s) { setTimeUsec64(int64_t(s * 1000000.)); }
 
 
 protected:

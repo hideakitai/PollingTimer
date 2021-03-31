@@ -6,35 +6,57 @@
 
 class FrameRateCounter : public IntervalCounter
 {
-    double fps {40.};
-    bool is_one_start {false};
-
 public:
 
-    explicit FrameRateCounter(const double fps)
-    : IntervalCounter(1.0 / fps)
-    , fps(fps)
-    , is_one_start(false)
+    explicit FrameRateCounter(const double fps = 1000000.)
+    : IntervalCounter(fps_to_interval(fps))
     {}
 
     virtual ~FrameRateCounter() {}
 
+    inline void startFps(const double fps)
+    {
+        startFpsFromFor(fps, 0., 0.);
+    }
+    inline void startFpsFrom(const double fps, const double from_frame)
+    {
+        startFpsFromFor(fps, from_frame, 0.);
+    }
+    inline void startFpsFor(const double fps, const double for_frame)
+    {
+        startFpsFromFor(fps, 0., for_frame);
+    }
+    inline void startFpsFromFor(const double fps, const double from_frame, const double for_frame)
+    {
+        IntervalCounter::startIntervalFromFor(fps_to_interval(fps), from_frame, for_frame);
+    }
+
     inline double frame()
     {
-        return is_one_start ? (count() + 1.) : count();
+        return count();
     }
 
-    inline void setFrameRate(const double rate)
+    inline void setFrameRate(const double fps)
     {
-        fps = rate;
-        setInterval(1. / fps);
+        setInterval(fps_to_interval(fps));
     }
 
-    inline void setFirstFrameToOne(const bool b) { is_one_start = b; }
+    double getFrameRate() const { return 1000000. / IntervalCounter::getInterval(); }
 
-    double getFrameRate() const { return fps; }
-    bool isFristFrameOne() const { return is_one_start; }
+private:
 
+    double fps_to_interval(const double fps) const {
+        if (fps <= 0.001) {
+            Serial.println("0.001");
+            return 1. / 0.001; // 1000[s] = 1,000,000,000[us]
+        }
+        else if (fps >= 1000000.) {
+            Serial.println("1000000");
+            return 1. / 1000000.; // 0.000001[s] = 1[us]
+        }
+        else
+            return 1. / fps;
+    }
 };
 
 #endif // HT_FRAMERATECOUNTER_H

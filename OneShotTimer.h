@@ -3,6 +3,7 @@
 #define HT_ONESHOTTIMER_H
 
 #include "IntervalCounter.h"
+#include "util/ArxTypeTraits/ArxTypeTraits.h"
 
 class OneShotTimer : public IntervalCounter
 {
@@ -22,7 +23,7 @@ public:
 
     void start()
     {
-        IntervalCounter::startForCount(1);
+        IntervalCounter::startOnce();
     }
 
 };
