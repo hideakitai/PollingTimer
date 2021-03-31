@@ -47,11 +47,9 @@ private:
 
     double fps_to_interval(const double fps) const {
         if (fps <= 0.001) {
-            Serial.println("0.001");
             return 1. / 0.001; // 1000[s] = 1,000,000,000[us]
         }
         else if (fps >= 1000000.) {
-            Serial.println("1000000");
             return 1. / 1000000.; // 0.000001[s] = 1[us]
         }
         else
