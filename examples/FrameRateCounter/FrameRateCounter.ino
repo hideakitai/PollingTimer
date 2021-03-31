@@ -2,18 +2,15 @@
 
 FrameRateCounter fps(1);
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(5000);
 
     fps.start();
 }
 
-void loop()
-{
-    if (fps.update())
-    {
+void loop() {
+    if (fps.update()) {
         Serial.print("frame no. = ");
         Serial.print(fps.frame());
         Serial.print(", time = ");

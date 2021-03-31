@@ -2,18 +2,15 @@
 
 PollingTimer timer;
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(5000);
 
     timer.start();
 }
 
-void loop()
-{
-    if (timer.isRunning())
-    {
+void loop() {
+    if (timer.isRunning()) {
         Serial.print("millis() : ");
         Serial.print(millis());
         Serial.print(", timer : ");

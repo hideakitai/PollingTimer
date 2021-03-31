@@ -4,19 +4,16 @@
 IntervalCounter interval(1);
 FrameRateCounter fps(2);
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(5000);
 
-    interval.addEvent([]()
-    {
+    interval.addEvent([]() {
         Serial.print("IntervalCounter Event: curr time = ");
         Serial.println(millis());
     });
 
-    fps.addEvent([]()
-    {
+    fps.addEvent([]() {
         Serial.print("FrameRateCounter Event: curr time = ");
         Serial.println(millis());
     });
@@ -25,8 +22,7 @@ void setup()
     fps.start();
 }
 
-void loop()
-{
+void loop() {
     interval.update();
     fps.update();
 }

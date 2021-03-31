@@ -2,13 +2,11 @@
 
 OneShotTimer oneshot(5);
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(5000);
 
-    oneshot.addEvent([]()
-    {
+    oneshot.addEvent([]() {
         Serial.print("OneShot Event: curr time = ");
         Serial.println(millis());
     });
@@ -18,7 +16,6 @@ void setup()
     oneshot.start();
 }
 
-void loop()
-{
+void loop() {
     oneshot.update();
 }

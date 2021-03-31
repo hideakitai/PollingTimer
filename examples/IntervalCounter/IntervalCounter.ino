@@ -1,18 +1,15 @@
 #include <IntervalCounter.h>
-IntervalCounter interval(1.0); // interval is 1.0[sec]
+IntervalCounter interval(1.0);  // interval is 1.0[sec]
 
-void setup()
-{
+void setup() {
     Serial.begin(115200);
     delay(5000);
 
     interval.start();
 }
 
-void loop()
-{
-    if (interval.update())
-    {
+void loop() {
+    if (interval.update()) {
         Serial.print("interval count = ");
         Serial.print(interval.count());
         Serial.print(", time = ");
