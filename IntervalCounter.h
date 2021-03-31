@@ -33,6 +33,9 @@ public:
     }
     inline void startIntervalFor(const double interval_sec, const double for_count)
     {
+    inline void startIntervalFor(const double for_count) {
+        startIntervalFromFor(interval, 0., for_count);
+    }
         startIntervalFromFor(interval_sec, 0., for_count);
     }
     inline void startIntervalFromFor(const double interval_sec, const double from_count, const double for_count)

@@ -24,6 +24,9 @@ public:
     }
     inline void startFpsFor(const double fps, const double for_frame)
     {
+    inline void startFpsFor(const double for_frame) {
+        startFpsFromFor(getFrameRate(), 0., for_frame);
+    }
         startFpsFromFor(fps, 0., for_frame);
     }
     inline void startFpsFromFor(const double fps, const double from_frame, const double for_frame)
