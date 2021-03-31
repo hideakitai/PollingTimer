@@ -78,8 +78,8 @@ public:
     }
     inline void startFromForUsec64(const int64_t from_us, const int64_t for_us)
     {
-        running = true;
         prev_running = false;
+        running = true;
         prev_us32 = MICROS();
         origin = prev_us64 = (int64_t)prev_us32;
         ovf = 0;
@@ -89,8 +89,8 @@ public:
 
     inline void stop()
     {
+        prev_running = running;
         running = false;
-        prev_running = false;
         prev_us32 = 0;
         origin = prev_us64 = 0;
         ovf = 0;
@@ -124,6 +124,7 @@ public:
         if (isRunning())
         {
             microsec();
+            prev_running = running;
             running = false;
         }
     }
@@ -139,7 +140,7 @@ public:
     inline bool isStopping() const { return (!running && (origin == 0)); }
 
     inline bool hasStarted() const { return running && !prev_running; }
-    inline bool hasFinished() const { return !running && prev_running; }
+    inline bool hasFinished() const { return !isPausing() && !running && prev_running; }
 
     inline int64_t usec64() { return microsec(); }
     inline double usec() { return (double)microsec(); }
