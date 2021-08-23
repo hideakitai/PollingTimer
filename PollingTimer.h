@@ -210,10 +210,8 @@ public:
 protected:
     inline int64_t microsec() {
         if (isRunning()) {
-            if (cb_start && hasStarted()) {
-                prev_running = true;
-                cb_start();
-            }
+            if (cb_start && hasStarted()) cb_start();
+            prev_running = true;
 
             int64_t t = elapsed() + offset;
             if ((t >= duration) && (duration != 0)) {
@@ -223,16 +221,12 @@ protected:
                 return t;
             }
         } else if (isPausing()) {
-            if (cb_pause && hasPaused()) {
-                prev_running = false;
-                cb_pause();
-            }
+            if (cb_pause && hasPaused()) cb_pause();
+            prev_running = false;
             return prev_us64 - origin + offset;
         } else {
-            if (cb_stop && hasStopped()) {
-                prev_running = false;
-                cb_stop();
-            }
+            if (cb_stop && hasStopped()) cb_stop();
+            prev_running = false;
             return 0;
         }
     }
