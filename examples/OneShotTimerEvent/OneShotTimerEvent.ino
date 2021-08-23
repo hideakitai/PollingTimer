@@ -6,7 +6,7 @@ void setup() {
     Serial.begin(115200);
     delay(5000);
 
-    oneshot.addEvent([]() {
+    oneshot.onUpdate([]() {
         Serial.print("OneShot Event: curr time = ");
         Serial.println(millis());
     });

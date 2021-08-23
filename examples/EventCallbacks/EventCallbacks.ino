@@ -8,12 +8,12 @@ void setup() {
     Serial.begin(115200);
     delay(5000);
 
-    interval.addEvent([]() {
+    interval.onUpdate([]() {
         Serial.print("IntervalCounter Event: curr time = ");
         Serial.println(millis());
     });
 
-    fps.addEvent([]() {
+    fps.onUpdate([]() {
         Serial.print("FrameRateCounter Event: curr time = ");
         Serial.println(millis());
     });
