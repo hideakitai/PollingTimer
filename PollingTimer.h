@@ -39,36 +39,39 @@ public:
     virtual ~PollingTimer() {}
 
     inline void start() {
-        startFromForUsec64(0, 0);
+        startFromForUsec64(0, 0, false);
     }
-    inline void startFrom(const double from_sec) {
-        startFromForUsec64(from_sec * 1000000., 0);
+
+    inline void startFromSec(const double from_sec) {
+        startFromForUsec64(from_sec * 1000000., 0, false);
     }
     inline void startFromMsec(const double from_ms) {
-        startFromForUsec64(from_ms * 1000., 0);
+        startFromForUsec64(from_ms * 1000., 0, false);
     }
     inline void startFromUsec(const double from_us) {
-        startFromForUsec64(from_us, 0);
+        startFromForUsec64(from_us, 0, false);
     }
-    inline void startFor(const double for_sec) {
-        startFromForUsec64(0, for_sec * 1000000.);
+
+    inline void startForSec(const double for_sec, const bool loop = false) {
+        startFromForUsec64(0, for_sec * 1000000., loop);
     }
-    inline void startForMsec(const double for_ms) {
-        startFromForUsec64(0, for_ms * 1000.);
+    inline void startForMsec(const double for_ms, const bool loop = false) {
+        startFromForUsec64(0, for_ms * 1000., loop);
     }
-    inline void startForUsec(const double for_us) {
-        startFromForUsec64(0, for_us);
+    inline void startForUsec(const double for_us, const bool loop = false) {
+        startFromForUsec64(0, for_us, loop);
     }
-    inline void startFromFor(const double from_sec, const double for_sec) {
-        startFromForUsec64(from_sec * 1000000., for_sec * 1000000.);
+
+    inline void startFromForSec(const double from_sec, const double for_sec, const bool loop = false) {
+        startFromForUsec64(from_sec * 1000000., for_sec * 1000000., loop);
     }
-    inline void startFromForMsec(const double from_ms, const double for_ms) {
-        startFromForUsec64(from_ms * 1000., for_ms * 1000.);
+    inline void startFromForMsec(const double from_ms, const double for_ms, const bool loop = false) {
+        startFromForUsec64(from_ms * 1000., for_ms * 1000., loop);
     }
-    inline void startFromForUsec(const double from_us, const double for_us) {
-        startFromForUsec64(from_us, for_us);
+    inline void startFromForUsec(const double from_us, const double for_us, const bool loop = false) {
+        startFromForUsec64(from_us, for_us, loop);
     }
-    inline void startFromForUsec64(const int64_t from_us, const int64_t for_us) {
+    inline void startFromForUsec64(const int64_t from_us, const int64_t for_us, const bool loop = false) {
         prev_running = running;
         running = true;
         prev_us32 = MICROS();
@@ -76,6 +79,7 @@ public:
         ovf = 0;
         offset = from_us;
         duration = for_us;
+        b_loop = loop;
     }
 
     inline void stop() {
@@ -84,8 +88,9 @@ public:
         prev_us32 = 0;
         origin = prev_us64 = 0;
         ovf = 0;
-        offset = 0;
-        duration = 0;
+        // offset
+        // duration
+        // b_loop
     }
 
     inline void play() {
@@ -105,6 +110,7 @@ public:
             // ovf
             // offset
             // duration
+            // b_loop
         } else if (isRunning())
             ;
         else
@@ -123,6 +129,7 @@ public:
             // ovf
             // offset
             // duration
+            // b_loop
         }
     }
 
@@ -157,8 +164,17 @@ public:
 
     inline double getOrigin() const { return (double)origin; }
     inline uint32_t getOverflow() const { return ovf; }
-    inline double getOffset() const { return offset; }
-    inline double getDuration() const { return duration; }
+
+    inline double getOffsetUsec64() const { return offset; }
+    inline double getOffsetUsec() const { return (double)offset; }
+    inline double getOffsetMsec() const { return (double)offset * 0.001; }
+    inline double getOffsetSec() const { return (double)offset * 0.000001; }
+
+    inline int64_t getDurationUsec64() const { return duration; }
+    inline double getDurationUsec() const { return (double)duration; }
+    inline double getDurationMsec() const { return (double)duration * 0.001; }
+    inline double getDurationSec() const { return (double)duration * 0.000001; }
+
     inline double getRemainingTime() { return (double)duration - usec(); }
     inline double getRemainingLife() { return (double)duration - usec() / (double)duration; }
 
@@ -171,6 +187,11 @@ public:
     inline void addOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
     inline void addOffsetMsec(const double ms) { addOffsetUsec64(int64_t(1000. * ms)); }
     inline void addOffsetSec(const double sec) { addOffsetUsec64(int64_t(1000000. * sec)); }
+
+    inline void setDurationUsec64(const int64_t us) { duration = us; }
+    inline void setDurationUsec(const double us) { setDurationUsec64(int64_t(us)); }
+    inline void setDurationMsec(const double ms) { setDurationUsec64(int64_t(1000. * ms)); }
+    inline void setDurationSec(const double sec) { setDurationUsec64(int64_t(1000000. * sec)); }
 
     inline void setTimeUsec64(const int64_t u) {
         if (isStopping()) {
@@ -198,14 +219,19 @@ public:
             prev_us64 += diff_us;
             origin += diff_us;
             setOffsetUsec(u - elapsed());
-        } else  // isRunning()
-        {
+        } else {  // isRunning()
             setOffsetUsec(u - elapsed());
         }
     }
     inline void setTimeUsec(const double u) { setTimeUsec64(int64_t(u)); }
     inline void setTimeMsec(const double m) { setTimeUsec64(int64_t(m * 1000.)); }
     inline void setTimeSec(const double s) { setTimeUsec64(int64_t(s * 1000000.)); }
+
+    void setLoop(const bool b) { b_loop = b; }
+    bool isLoop() const { return b_loop; }
+
+    bool hasOffset() const { return offset != 0; }
+    bool hasDuration() const { return duration != 0; }
 
     void onStart(const std::function<void(void)>& cb) { cb_start = cb; }
     void onPause(const std::function<void(void)>& cb) { cb_pause = cb; }
@@ -228,7 +254,10 @@ protected:
             int64_t t = elapsed() + offset;
             if ((t >= duration) && (duration != 0)) {
                 t = prev_us64 - origin + offset;
-                stop();
+                if (b_loop)
+                    restart();
+                else
+                    stop();
             }
             return t;
         } else if (isPausing()) {
