@@ -38,40 +38,40 @@ protected:
 public:
     virtual ~PollingTimer() {}
 
-    inline void start() {
+    void start() {
         startFromForUsec64(0, 0, false);
     }
 
-    inline void startFromSec(const double from_sec) {
+    void startFromSec(const double from_sec) {
         startFromForUsec64(from_sec * 1000000., 0, false);
     }
-    inline void startFromMsec(const double from_ms) {
+    void startFromMsec(const double from_ms) {
         startFromForUsec64(from_ms * 1000., 0, false);
     }
-    inline void startFromUsec(const double from_us) {
+    void startFromUsec(const double from_us) {
         startFromForUsec64(from_us, 0, false);
     }
 
-    inline void startForSec(const double for_sec, const bool loop = false) {
+    void startForSec(const double for_sec, const bool loop = false) {
         startFromForUsec64(0, for_sec * 1000000., loop);
     }
-    inline void startForMsec(const double for_ms, const bool loop = false) {
+    void startForMsec(const double for_ms, const bool loop = false) {
         startFromForUsec64(0, for_ms * 1000., loop);
     }
-    inline void startForUsec(const double for_us, const bool loop = false) {
+    void startForUsec(const double for_us, const bool loop = false) {
         startFromForUsec64(0, for_us, loop);
     }
 
-    inline void startFromForSec(const double from_sec, const double for_sec, const bool loop = false) {
+    void startFromForSec(const double from_sec, const double for_sec, const bool loop = false) {
         startFromForUsec64(from_sec * 1000000., for_sec * 1000000., loop);
     }
-    inline void startFromForMsec(const double from_ms, const double for_ms, const bool loop = false) {
+    void startFromForMsec(const double from_ms, const double for_ms, const bool loop = false) {
         startFromForUsec64(from_ms * 1000., for_ms * 1000., loop);
     }
-    inline void startFromForUsec(const double from_us, const double for_us, const bool loop = false) {
+    void startFromForUsec(const double from_us, const double for_us, const bool loop = false) {
         startFromForUsec64(from_us, for_us, loop);
     }
-    inline void startFromForUsec64(const int64_t from_us, const int64_t for_us, const bool loop = false) {
+    void startFromForUsec64(const int64_t from_us, const int64_t for_us, const bool loop = false) {
         prev_running = running;
         running = true;
         prev_us32 = MICROS();
@@ -82,7 +82,7 @@ public:
         b_loop = loop;
     }
 
-    inline void stop() {
+    void stop() {
         prev_running = running;
         running = false;
         prev_us32 = 0;
@@ -93,7 +93,7 @@ public:
         // b_loop
     }
 
-    inline void play() {
+    void play() {
         if (isPausing()) {
             prev_running = running;
             running = true;
@@ -117,7 +117,7 @@ public:
             restart();
     }
 
-    inline void pause() {
+    void pause() {
         if (isRunning()) {
             microsec();
             prev_running = running;
@@ -133,12 +133,12 @@ public:
         }
     }
 
-    inline void restart() {
+    void restart() {
         stop();
         startFromForUsec64(offset, duration, b_loop);
     }
 
-    inline void clear() {
+    void clear() {
         prev_running = false;
         running = false;
         prev_us32 = 0;
@@ -149,51 +149,51 @@ public:
         b_loop = false;
     }
 
-    inline bool isRunning() const { return running; }
-    inline bool isPausing() const { return (!running && (origin != 0)); }
-    inline bool isStopping() const { return (!running && (origin == 0)); }
+    bool isRunning() const { return running; }
+    bool isPausing() const { return (!running && (origin != 0)); }
+    bool isStopping() const { return (!running && (origin == 0)); }
 
-    inline bool hasStarted() const { return isRunning() && !prev_running; }
-    inline bool hasPaused() const { return isPausing() && prev_running; }
-    inline bool hasStopped() const { return isStopping() && prev_running; }
+    bool hasStarted() const { return isRunning() && !prev_running; }
+    bool hasPaused() const { return isPausing() && prev_running; }
+    bool hasStopped() const { return isStopping() && prev_running; }
 
-    inline int64_t usec64() { return microsec(); }
-    inline double usec() { return (double)microsec(); }
-    inline double msec() { return usec() * 0.001; }
-    inline double sec() { return usec() * 0.000001; }
+    int64_t usec64() { return microsec(); }
+    double usec() { return (double)microsec(); }
+    double msec() { return usec() * 0.001; }
+    double sec() { return usec() * 0.000001; }
 
-    inline double getOrigin() const { return (double)origin; }
-    inline uint32_t getOverflow() const { return ovf; }
+    double getOrigin() const { return (double)origin; }
+    uint32_t getOverflow() const { return ovf; }
 
-    inline double getOffsetUsec64() const { return offset; }
-    inline double getOffsetUsec() const { return (double)offset; }
-    inline double getOffsetMsec() const { return (double)offset * 0.001; }
-    inline double getOffsetSec() const { return (double)offset * 0.000001; }
+    double getOffsetUsec64() const { return offset; }
+    double getOffsetUsec() const { return (double)offset; }
+    double getOffsetMsec() const { return (double)offset * 0.001; }
+    double getOffsetSec() const { return (double)offset * 0.000001; }
 
-    inline int64_t getDurationUsec64() const { return duration; }
-    inline double getDurationUsec() const { return (double)duration; }
-    inline double getDurationMsec() const { return (double)duration * 0.001; }
-    inline double getDurationSec() const { return (double)duration * 0.000001; }
+    int64_t getDurationUsec64() const { return duration; }
+    double getDurationUsec() const { return (double)duration; }
+    double getDurationMsec() const { return (double)duration * 0.001; }
+    double getDurationSec() const { return (double)duration * 0.000001; }
 
-    inline double getRemainingTime() { return (double)duration - usec(); }
-    inline double getRemainingLife() { return (double)duration - usec() / (double)duration; }
+    double getRemainingTime() { return (double)duration - usec(); }
+    double getRemainingLife() { return (double)duration - usec() / (double)duration; }
 
-    inline void setOffsetUsec64(const int64_t us) { offset = us; }
-    inline void setOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
-    inline void setOffsetMsec(const double ms) { setOffsetUsec64(int64_t(1000. * ms)); }
-    inline void setOffsetSec(const double sec) { setOffsetUsec64(int64_t(1000000. * sec)); }
+    void setOffsetUsec64(const int64_t us) { offset = us; }
+    void setOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
+    void setOffsetMsec(const double ms) { setOffsetUsec64(int64_t(1000. * ms)); }
+    void setOffsetSec(const double sec) { setOffsetUsec64(int64_t(1000000. * sec)); }
 
-    inline void addOffsetUsec64(const int64_t us) { setOffsetUsec64(offset + us); }
-    inline void addOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
-    inline void addOffsetMsec(const double ms) { addOffsetUsec64(int64_t(1000. * ms)); }
-    inline void addOffsetSec(const double sec) { addOffsetUsec64(int64_t(1000000. * sec)); }
+    void addOffsetUsec64(const int64_t us) { setOffsetUsec64(offset + us); }
+    void addOffsetUsec(const double us) { setOffsetUsec64(int64_t(us)); }
+    void addOffsetMsec(const double ms) { addOffsetUsec64(int64_t(1000. * ms)); }
+    void addOffsetSec(const double sec) { addOffsetUsec64(int64_t(1000000. * sec)); }
 
-    inline void setDurationUsec64(const int64_t us) { duration = us; }
-    inline void setDurationUsec(const double us) { setDurationUsec64(int64_t(us)); }
-    inline void setDurationMsec(const double ms) { setDurationUsec64(int64_t(1000. * ms)); }
-    inline void setDurationSec(const double sec) { setDurationUsec64(int64_t(1000000. * sec)); }
+    void setDurationUsec64(const int64_t us) { duration = us; }
+    void setDurationUsec(const double us) { setDurationUsec64(int64_t(us)); }
+    void setDurationMsec(const double ms) { setDurationUsec64(int64_t(1000. * ms)); }
+    void setDurationSec(const double sec) { setDurationUsec64(int64_t(1000000. * sec)); }
 
-    inline void setTimeUsec64(const int64_t u) {
+    void setTimeUsec64(const int64_t u) {
         if (isStopping()) {
             prev_us32 = MICROS();
             prev_us64 = (int64_t)prev_us32;
@@ -223,9 +223,9 @@ public:
             setOffsetUsec(u - elapsed());
         }
     }
-    inline void setTimeUsec(const double u) { setTimeUsec64(int64_t(u)); }
-    inline void setTimeMsec(const double m) { setTimeUsec64(int64_t(m * 1000.)); }
-    inline void setTimeSec(const double s) { setTimeUsec64(int64_t(s * 1000000.)); }
+    void setTimeUsec(const double u) { setTimeUsec64(int64_t(u)); }
+    void setTimeMsec(const double m) { setTimeUsec64(int64_t(m * 1000.)); }
+    void setTimeSec(const double s) { setTimeUsec64(int64_t(s * 1000000.)); }
 
     void setLoop(const bool b) { b_loop = b; }
     bool isLoop() const { return b_loop; }
@@ -246,7 +246,7 @@ public:
     bool hasEventOnStop() const { return (bool)cb_stop; }
 
 protected:
-    inline int64_t microsec() {
+    int64_t microsec() {
         if (isRunning()) {
             if (cb_start && hasStarted()) cb_start();
             prev_running = true;
@@ -271,7 +271,7 @@ protected:
         }
     }
 
-    inline int64_t elapsed() {
+    int64_t elapsed() {
         uint32_t curr_us32 = MICROS();
 
         if (curr_us32 < prev_us32)  // check overflow and interrupt
