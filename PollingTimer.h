@@ -131,6 +131,17 @@ public:
         start();
     }
 
+    inline void clear() {
+        prev_running = false;
+        running = false;
+        prev_us32 = 0;
+        origin = prev_us64 = 0;
+        ovf = 0;
+        offset = 0;
+        duration = 0;
+        b_loop = false;
+    }
+
     inline bool isRunning() const { return running; }
     inline bool isPausing() const { return (!running && (origin != 0)); }
     inline bool isStopping() const { return (!running && (origin == 0)); }
