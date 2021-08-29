@@ -29,6 +29,7 @@ protected:
     uint32_t ovf {0};
     int64_t offset {0};
     int64_t duration {0};
+    bool b_loop {false};
 
     std::function<void(void)> cb_start;
     std::function<void(void)> cb_pause;
