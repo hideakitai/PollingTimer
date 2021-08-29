@@ -117,11 +117,6 @@ public:
         cnt = 0;
     }
 
-    void restart() {
-        IntervalCounter::stop();
-        start();
-    }
-
     double count() {
         if (isPausing()) update();
         return (double)cnt;
