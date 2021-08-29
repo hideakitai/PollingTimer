@@ -128,7 +128,7 @@ public:
 
     inline void restart() {
         stop();
-        start();
+        startFromForUsec64(offset, duration, b_loop);
     }
 
     inline void clear() {
