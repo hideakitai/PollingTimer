@@ -156,6 +156,7 @@ public:
     bool hasStarted() const { return isRunning() && !prev_running; }
     bool hasPaused() const { return isPausing() && prev_running; }
     bool hasStopped() const { return isStopping() && prev_running; }
+    void releaseEventTrigger() { prev_running = running; }
 
     int64_t usec64() { return microsec(); }
     double usec() { return (double)microsec(); }
