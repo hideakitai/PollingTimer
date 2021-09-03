@@ -254,11 +254,13 @@ protected:
 
             int64_t t = elapsed() + offset;
             if ((t >= duration) && (duration != 0)) {
-                t = prev_us64 - origin + offset;
-                if (b_loop)
+                if (b_loop) {
+                    t = 0;
                     restart();
-                else
+                } else {
+                    t = prev_us64 - origin + offset;
                     stop();
+                }
             }
             return t;
         } else if (isPausing()) {
