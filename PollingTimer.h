@@ -38,7 +38,7 @@ protected:
 public:
     virtual ~PollingTimer() {}
 
-    void start() {
+    virtual void start() {
         startFromForUsec64(0, 0, false);
     }
 
@@ -82,7 +82,7 @@ public:
         b_loop = loop;
     }
 
-    void stop() {
+    virtual void stop() {
         prev_running = running;
         running = false;
         prev_us32 = 0;
@@ -93,7 +93,7 @@ public:
         // b_loop
     }
 
-    void play() {
+    virtual void play() {
         if (isPausing()) {
             prev_running = running;
             running = true;
@@ -117,7 +117,7 @@ public:
             restart();
     }
 
-    void pause() {
+    virtual void pause() {
         if (isRunning()) {
             microsec();
             prev_running = running;
@@ -133,12 +133,12 @@ public:
         }
     }
 
-    void restart() {
+    virtual void restart() {
         stop();
         startFromForUsec64(offset, duration, b_loop);
     }
 
-    void clear() {
+    virtual void clear() {
         prev_running = false;
         running = false;
         prev_us32 = 0;
