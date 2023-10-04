@@ -3,7 +3,7 @@
 #define HT_ONESHOTTIMER_H
 
 #include "IntervalCounter.h"
-#include "util/ArxTypeTraits/ArxTypeTraits.h"
+#include <ArxTypeTraits.h>
 
 class OneShotTimer : public IntervalCounter {
 public:

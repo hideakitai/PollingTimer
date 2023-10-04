@@ -4,7 +4,7 @@
 
 #ifdef ARDUINO
 #include <Arduino.h>
-#include "util/ArxTypeTraits/ArxTypeTraits.h"
+#include <ArxTypeTraits.h>
 #include "util/TeensyDirtySTLErrorSolution/TeensyDirtySTLErrorSolution.h"
 #define MICROS() micros()
 #elif defined(OF_VERSION_MAJOR)
