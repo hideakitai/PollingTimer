@@ -96,4 +96,5 @@ jobs:
             - examples
           libraries: |
             - source-path: ./
+            - name: ArxTypeTraits
           verbose: true

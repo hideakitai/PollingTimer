@@ -14,5 +14,9 @@
     "version": "0.4.3",
     "license": "MIT",
     "frameworks": "*",
-    "platforms": "*"
+    "platforms": "*",
+    "dependencies":
+    {
+        "hideakitai/ArxTypeTraits": "*"
+    }
 }

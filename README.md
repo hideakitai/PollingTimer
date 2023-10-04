@@ -291,9 +291,12 @@ OneShotTimer(const double sec, const std::function<void(void)>& f);
 void start();
 ```
 
+## Dependent Libraries
+
+- [ArxTypeTraits](https://github.com/hideakitai/ArxTypeTraits)
+
 ## Embedded Libraries
 
-- [ArxTypeTraits v0.2.3](https://github.com/hideakitai/ArxTypeTraits)
 - [TeensyDirtySTLErrorSolution v0.1.0](https://github.com/hideakitai/TeensyDirtySTLErrorSolution)
 
 ## Used Inside of
