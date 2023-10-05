@@ -119,7 +119,7 @@ public:
 
     virtual void pause() {
         if (isRunning()) {
-            microsec();
+            this->update();
             prev_running = running;
             running = false;
             // No need to change
@@ -147,6 +147,33 @@ public:
         offset = 0;
         duration = 0;
         b_loop = false;
+    }
+
+    int64_t update() {
+        if (isRunning()) {
+            if (cb_start && hasStarted()) cb_start();
+            prev_running = true;
+
+            int64_t t = elapsed() + offset;
+            if ((t >= duration) && (duration != 0)) {
+                if (b_loop) {
+                    t = 0;
+                    restart();
+                } else {
+                    t = prev_us64 - origin + offset;
+                    stop();
+                }
+            }
+            return t;
+        } else if (isPausing()) {
+            if (cb_pause && hasPaused()) cb_pause();
+            prev_running = false;
+            return prev_us64 - origin + offset;
+        } else {
+            if (cb_stop && hasStopped()) cb_stop();
+            prev_running = false;
+            return 0;
+        }
     }
 
     bool isRunning() const { return running; }
@@ -249,27 +276,10 @@ public:
 protected:
     int64_t microsec() {
         if (isRunning()) {
-            if (cb_start && hasStarted()) cb_start();
-            prev_running = true;
-
-            int64_t t = elapsed() + offset;
-            if ((t >= duration) && (duration != 0)) {
-                if (b_loop) {
-                    t = 0;
-                    restart();
-                } else {
-                    t = prev_us64 - origin + offset;
-                    stop();
-                }
-            }
-            return t;
+            return elapsed() + offset;
         } else if (isPausing()) {
-            if (cb_pause && hasPaused()) cb_pause();
-            prev_running = false;
             return prev_us64 - origin + offset;
         } else {
-            if (cb_stop && hasStopped()) cb_stop();
-            prev_running = false;
             return 0;
         }
     }

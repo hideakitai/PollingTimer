@@ -113,6 +113,8 @@ virtual void pause();
 virtual void restart();
 virtual void clear();
 
+int64_t update();  // reqired to trigger events (auto stop, loop, event callbacks, etc.)
+
 void startFromSec(const double from_sec);
 void startFromMsec(const double from_ms);
 void startFromUsec(const double from_us);
