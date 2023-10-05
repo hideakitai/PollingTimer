@@ -128,7 +128,7 @@ public:
     }
 
     double count() {
-        if (isPausing()) update();
+        if (isPausing()) IntervalCounter::update();
         return (double)cnt;
     }
 
@@ -161,7 +161,7 @@ public:
     }
 
     bool update() {
-        const double us = this->usec();
+        const double us = PollingTimer::update();
         double prev_cnt = cnt;
         cnt = us / interval_us;
         bool b = (floor(cnt) > 0.) && (floor(cnt) > floor(prev_cnt));

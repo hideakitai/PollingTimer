@@ -10,6 +10,8 @@ void setup() {
 }
 
 void loop() {
+    timer.update();  // reqired to trigger events (auto stop, loop, event callbacks, etc.)
+
     if (timer.isRunning()) {
         Serial.print("millis() : ");
         Serial.print(millis());
